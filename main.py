@@ -4,6 +4,7 @@ def print_board(board):
         if i < 2:
             print("---------")
 
+
 def check_win(board, player):
     for r in range(3):
         if all(board[r][c] == player for c in range(3)):
@@ -16,6 +17,29 @@ def check_win(board, player):
     if board[0][2] == player and board[1][1] == player and board[2][0] == player:
         return True
     return False
+
+
+def play_turn(board, player):
+    try:
+        choice = int(input(f"Player {player}, enter a number (1-9): ").strip())
+    except ValueError:
+        print("Invalid input. Enter a number from 1 to 9.")
+        return False
+
+    if not 1 <= choice <= 9:
+        print("Number must be between 1 and 9.")
+        return False
+
+    row = (choice - 1) // 3
+    col = (choice - 1) % 3
+
+    if board[row][col] in ("X", "O"):
+        print("Cell already taken, choose another.")
+        return False
+
+    board[row][col] = player
+    return True
+
 
 def main():
     board = [
@@ -31,36 +55,18 @@ def main():
     print_board(board)
 
     while moves < 9:
-        try:
-            choice = int(input(f"Player {current}, enter a number (1-9): ").strip())
-        except ValueError:
-            print("Invalid input. Enter a number from 1 to 9.")
-            continue
+        if play_turn(board, current):
+            moves += 1
+            print_board(board)
 
-        if not 1 <= choice <= 9:
-            print("Number must be between 1 and 9.")
-            continue
+            if check_win(board, current):
+                print(f"Player {current} wins!")
+                return
 
-        row = (choice - 1) // 3
-        col = (choice - 1) % 3
-
-        if board[row][col] in ("X", "O"):
-            print("Cell already taken, choose another.")
-            continue
-
-        board[row][col] = current
-        moves += 1
-
-        print_board(board)
-
-        if check_win(board, current):
-            print(f"Player {current} wins!")
-            return
-
-        current = "O" if current == "X" \
-        else "X"
+            current = "O" if current == "X" else "X"
 
     print("It's a draw!")
+
 
 if __name__ == "__main__":
     main()
