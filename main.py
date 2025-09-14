@@ -1,0 +1,66 @@
+def print_board(board):
+    for i, row in enumerate(board):
+        print(" | ".join(str(x) for x in row))
+        if i < 2:
+            print("---------")
+
+def check_win(board, player):
+    for r in range(3):
+        if all(board[r][c] == player for c in range(3)):
+            return True
+    for c in range(3):
+        if all(board[r][c] == player for r in range(3)):
+            return True
+    if board[0][0] == player and board[1][1] == player and board[2][2] == player:
+        return True
+    if board[0][2] == player and board[1][1] == player and board[2][0] == player:
+        return True
+    return False
+
+def main():
+    board = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+    ]
+
+    current = "X"
+    moves = 0
+
+    print("Tic Tac Toe — choose a number from 1 to 9")
+    print_board(board)
+
+    while moves < 9:
+        try:
+            choice = int(input(f"Player {current}, enter a number (1-9): ").strip())
+        except ValueError:
+            print("Invalid input. Enter a number from 1 to 9.")
+            continue
+
+        if not 1 <= choice <= 9:
+            print("Number must be between 1 and 9.")
+            continue
+
+        row = (choice - 1) // 3
+        col = (choice - 1) % 3
+
+        if board[row][col] in ("X", "O"):
+            print("Cell already taken, choose another.")
+            continue
+
+        board[row][col] = current
+        moves += 1
+
+        print_board(board)
+
+        if check_win(board, current):
+            print(f"Player {current} wins!")
+            return
+
+        current = "O" if current == "X" \
+        else "X"
+
+    print("It's a draw!")
+
+if __name__ == "__main__":
+    main()
